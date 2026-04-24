@@ -64,4 +64,55 @@ class AuthController extends Controller
 
         return response()->json(['mensaje' => '¡Bienvenido!', 'usuario' => $user], 200);
     }
+
+    public function cambiarPassword(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password_actual' => 'required',
+            'password_nueva' => 'required|min:6'
+        ]);
+
+        $user = \App\Models\User::find($request->user_id);
+
+        // 1. Verificamos que la contraseña antigua sea la correcta
+        if (!Hash::check($request->password_actual, $user->password)) {
+            return response()->json([
+                'message' => 'La contraseña actual es incorrecta.'
+            ], 400); // 400 significa "Bad Request" (Error del usuario)
+        }
+
+        // 2. Si es correcta, la cambiamos y guardamos
+        $user->password = Hash::make($request->password_nueva);
+        $user->save();
+
+        return response()->json([
+            'mensaje' => '¡Contraseña actualizada con éxito!'
+        ], 200);
+    }
+
+    public function directorio()
+    {
+        // Traemos solo a los usuarios que son residentes
+        $residentes = \App\Models\User::where('rol', 'residente')->get()->map(function ($residente) {
+            
+            // 1. ¿Cuántos casos ha reportado este residente?
+            $residente->casos_reportados = \App\Models\Reporte::where('user_id', $residente->id)->count();
+
+            // 2. ¿Cuántas quejas hay contra su torre y apartamento? (La magia que pediste)
+            // Solo contamos si la torre y apto coinciden, y el estado NO es 'Descartado'
+            if ($residente->torre && $residente->apartamento) {
+                $residente->quejas_recibidas = \App\Models\Reporte::where('torre_incidente', $residente->torre)
+                    ->where('apartamento_incidente', $residente->apartamento)
+                    ->where('estado', '!=', 'Descartado') 
+                    ->count();
+            } else {
+                $residente->quejas_recibidas = 0;
+            }
+
+            return $residente;
+        });
+
+        return response()->json($residentes);
+    }
 }

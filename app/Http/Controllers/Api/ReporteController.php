@@ -53,4 +53,30 @@ class ReporteController extends Controller
             'reporte' => $reporte
         ], 201);
     }
+    // Para el Vigilante: Trae solo los casos "Abiertos"
+    public function casosActivos()
+    {
+        // Traemos los reportes y le "pegamos" la información del residente
+        $reportes = Reporte::with('residente')->where('estado', 'Abierto')->orderBy('fecha', 'desc')->get();
+        return response()->json($reportes);
+    }
+
+    // Para el Admin: Trae TODOS los casos
+    public function todosLosCasos()
+    {
+        // Traemos todos los reportes con la info del residente y del vigilante
+        $reportes = Reporte::with(['residente', 'vigilante'])->orderBy('fecha', 'desc')->get();
+        return response()->json($reportes);
+    }
+
+    // Para que el Vigilante asigne el caso a su nombre
+    public function tomarCaso(Request $request, $id)
+    {
+        $reporte = Reporte::findOrFail($id);
+        $reporte->vigilante_id = $request->vigilante_id;
+        $reporte->estado = 'En Proceso';
+        $reporte->save();
+
+        return response()->json(['mensaje' => '¡Caso tomado con éxito!']);
+    }
 }

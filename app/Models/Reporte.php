@@ -24,19 +24,13 @@ class Reporte extends Model
         'vigilante_id',
     ];
 
-    /**
-     * Relación: Un reporte pertenece a un usuario (el residente que lo crea)
-     */
-    public function usuario()
-    {
+// Relación: Un reporte pertenece a un residente (usuario)
+    public function residente() {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Relación: Un reporte puede tener un vigilante asignado
-     */
-    public function vigilante()
-    {
+    // Relación: Un reporte puede tener asignado un vigilante
+    public function vigilante() {
         return $this->belongsTo(User::class, 'vigilante_id');
     }
 }
