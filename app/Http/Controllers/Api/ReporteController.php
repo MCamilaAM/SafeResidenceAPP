@@ -61,6 +61,16 @@ class ReporteController extends Controller
         return response()->json($reportes);
     }
 
+    public function casosVigilante($id)
+    {
+        // Busca los reportes asignados a este vigilante y que estén "En Proceso"
+        $casos = Reporte::with('residente')
+                        ->where('vigilante_id', $id)
+                        ->where('estado', 'En Proceso') // O el estado que manejen
+                        ->get();
+        return response()->json($casos);
+    }
+
     // Para el Admin: Trae TODOS los casos
     public function todosLosCasos()
     {
@@ -80,3 +90,5 @@ class ReporteController extends Controller
         return response()->json(['mensaje' => '¡Caso tomado con éxito!']);
     }
 }
+
+

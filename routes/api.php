@@ -20,3 +20,4 @@ Route::post('/reportes/{id}/tomar', [App\Http\Controllers\Api\ReporteController:
 
 Route::post('/cambiar-password', [App\Http\Controllers\Api\AuthController::class, 'cambiarPassword']);
 Route::get('/directorio', [App\Http\Controllers\Api\AuthController::class, 'directorio']);
+Route::get('/reportes/vigilante/{id}', [ReporteController::class, 'casosVigilante']);
