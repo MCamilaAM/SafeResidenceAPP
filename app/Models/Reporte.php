@@ -9,8 +9,6 @@ class Reporte extends Model
 {
     use HasFactory;
 
-    // Le decimos a Laravel qué campos puede llenar el usuario desde la App
-    // Esto es vital para que el controlador funcione
     protected $fillable = [
         'user_id',
         'titulo',
@@ -24,13 +22,16 @@ class Reporte extends Model
         'vigilante_id',
     ];
 
-// Relación: Un reporte pertenece a un residente (usuario)
     public function residente() {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relación: Un reporte puede tener asignado un vigilante
     public function vigilante() {
         return $this->belongsTo(User::class, 'vigilante_id');
+    }
+
+    public function novedades() {
+        // El ->with('usuario') hace que al pedir la novedad, también traiga el nombre de quien la escribió
+        return $this->hasMany(Novedad::class)->with('usuario')->orderBy('created_at', 'asc');
     }
 }

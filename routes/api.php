@@ -21,3 +21,11 @@ Route::post('/reportes/{id}/tomar', [App\Http\Controllers\Api\ReporteController:
 Route::post('/cambiar-password', [App\Http\Controllers\Api\AuthController::class, 'cambiarPassword']);
 Route::get('/directorio', [App\Http\Controllers\Api\AuthController::class, 'directorio']);
 Route::get('/reportes/vigilante/{id}', [ReporteController::class, 'casosVigilante']);
+Route::get('/reportes/residente/{id}', [ReporteController::class, 'casosResidente']);
+Route::get('/metricas', [App\Http\Controllers\Api\ReporteController::class, 'metricasDashboard']);
+
+// Guardar una nueva actualización (novedad) en un caso
+Route::post('/reportes/{id}/novedad', [App\Http\Controllers\Api\ReporteController::class, 'agregarNovedad']);
+// Cerrar un caso definitivamente (Admin)
+Route::put('/reportes/{id}/cerrar', [App\Http\Controllers\Api\ReporteController::class, 'cerrarCaso']);
+Route::get('/usuarios/{id}/llamados', [App\Http\Controllers\Api\ReporteController::class, 'llamadosUsuario']);
